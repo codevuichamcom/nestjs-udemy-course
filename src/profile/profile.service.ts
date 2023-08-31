@@ -1,5 +1,5 @@
-import { UserResponseInterface } from './../user/types/userResponse.interface';
-import { ProfileResponseInterface } from '@app/profile/interfaces/ProfileResponse.interface';
+import { UserResponseInterface } from '../user/types/user-response.interface';
+import { ProfileResponseInterface } from '@app/profile/interfaces/profile-response.interface';
 import { UserEntity } from '@app/user/user.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';

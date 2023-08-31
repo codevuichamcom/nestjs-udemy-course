@@ -1,4 +1,4 @@
-import { ExpressRequest } from '@app/types/expreRequest.interface';
+import { ExpressRequest } from '@app/types/expres-request.interface';
 import { UserService } from '@app/user/user.service';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Response } from 'express';

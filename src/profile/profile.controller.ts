@@ -1,4 +1,4 @@
-import { ProfileResponseInterface } from '@app/profile/interfaces/ProfileResponse.interface';
+import { ProfileResponseInterface } from '@app/profile/interfaces/profile-response.interface';
 import { ProfileService } from '@app/profile/profile.service';
 import { User } from '@app/user/decorator/user.decorator';
 import { AuthGuard } from '@app/user/guards/auth.guard';

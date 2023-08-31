@@ -1,9 +1,9 @@
 import { User } from '@app/user/decorator/user.decorator';
-import { CreateUserDto } from '@app/user/dto/createUser.dto';
-import { LoginUserDto } from '@app/user/dto/loginUser.dto';
-import { UpdateUserDto } from '@app/user/dto/updateUser.dto';
+import { CreateUserDto } from '@app/user/dto/create-user.dto';
+import { LoginUserDto } from '@app/user/dto/login-user.dto';
+import { UpdateUserDto } from '@app/user/dto/update-user.dto';
 import { AuthGuard } from '@app/user/guards/auth.guard';
-import { UserResponseInterface } from '@app/user/types/userResponse.interface';
+import { UserResponseInterface } from '@app/user/types/user-response.interface';
 import { UserEntity } from '@app/user/user.entity';
 import { UserService } from '@app/user/user.service';
 import {

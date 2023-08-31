@@ -1,4 +1,4 @@
-import { ArticleResponseInterface } from './types/articleResponse.interface';
+import { ArticleResponseInterface } from './types/article-response.interface';
 import { ArticleEntity } from '@app/article/article.entity';
 import { UserEntity } from '@app/user/user.entity';
 import { AuthGuard } from '@app/user/guards/auth.guard';
@@ -17,8 +17,8 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ArticlesResponseInterface } from '@app/article/types/articlesResponse.interface';
-import { CreateArticleDto } from '@app/article/dto/createArticle.dto';
+import { ArticlesResponseInterface } from '@app/article/types/articles-response.interface';
+import { CreateArticleDto } from '@app/article/dto/create-article.dto';
 import { DeleteResult } from 'typeorm';
 
 @Controller('articles')
