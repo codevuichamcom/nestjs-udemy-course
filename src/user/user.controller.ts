@@ -1,6 +1,8 @@
 import { User } from '@app/user/decorator/user.decorator';
 import { CreateUserDto } from '@app/user/dto/createUser.dto';
 import { LoginUserDto } from '@app/user/dto/loginUser.dto';
+import { UpdateUserDto } from '@app/user/dto/updateUser.dto';
+import { AuthGuard } from '@app/user/guards/auth.guard';
 import { UserResponseInterface } from '@app/user/types/userResponse.interface';
 import { UserEntity } from '@app/user/user.entity';
 import { UserService } from '@app/user/user.service';
@@ -8,20 +10,21 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Post,
   Put,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UpdateUserDto } from '@app/user/dto/updateUser.dto';
-import { AuthGuard } from '@app/user/guards/auth.guard';
 
 @Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('users')
+  @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe())
   async register(
     @Body('user') createUserDto: CreateUserDto,
@@ -31,6 +34,7 @@ export class UserController {
   }
 
   @Post('users/login')
+  @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe())
   async login(
     @Body('user') loginUserDto: LoginUserDto,
