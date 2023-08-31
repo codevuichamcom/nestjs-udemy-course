@@ -24,7 +24,6 @@ export class ProfileService {
         relations: ['followerUser'],
       },
     );
-    console.log({ currentUser, flow: currentUser.followerUser });
 
     let isFollowing = false;
     if (
@@ -36,8 +35,8 @@ export class ProfileService {
         currentUser.followerUser.findIndex((u) => u.id === user.id) !== -1;
     }
     return {
-      user: {
-        email: user.email,
+      profile: {
+        username: user.username,
         bio: user.bio,
         image: user.image,
         following: isFollowing,
@@ -73,8 +72,8 @@ export class ProfileService {
       await this.userRepository.save(currentUser);
     }
     return {
-      user: {
-        email: user.email,
+      profile: {
+        username: user.username,
         bio: user.bio,
         image: user.image,
         following: isFollowing,
@@ -105,8 +104,8 @@ export class ProfileService {
       await this.userRepository.save(currentUser);
     }
     return {
-      user: {
-        email: user.email,
+      profile: {
+        username: user.username,
         bio: user.bio,
         image: user.image,
         following: false,

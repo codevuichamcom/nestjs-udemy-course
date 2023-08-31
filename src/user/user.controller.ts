@@ -59,7 +59,7 @@ export class UserController {
   async updateCurrentUser(
     @User('id') currentUserId,
     @Body('user') updateUserDto: UpdateUserDto,
-  ) {
+  ): Promise<UserResponseInterface> {
     const user = await this.userService.updateUser(
       currentUserId,
       updateUserDto,
