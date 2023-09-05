@@ -237,7 +237,7 @@ export class ArticleService {
     return {
       article: {
         ...article,
-        favorited: false,
+        favorited: false, //TODO: update dynamic favorited before build response
       },
     };
   }
