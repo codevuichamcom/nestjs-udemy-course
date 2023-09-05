@@ -20,6 +20,7 @@ import {
 import { ArticlesResponseInterface } from '@app/article/types/articles-response.interface';
 import { CreateArticleDto } from '@app/article/dto/create-article.dto';
 import { DeleteResult } from 'typeorm';
+import { UpdateArticleDto } from '@app/article/dto/update-article.dto';
 
 @Controller('articles')
 export class ArticleController {
@@ -31,6 +32,15 @@ export class ArticleController {
     @Query() query: any,
   ): Promise<ArticlesResponseInterface> {
     return await this.articleService.findAll(currentUserId, query);
+  }
+
+  @Get('feed')
+  @UseGuards(AuthGuard)
+  async getFeed(
+    @User('id') currentUserId: number,
+    @Query() query: any,
+  ): Promise<ArticlesResponseInterface> {
+    return await this.articleService.getFeed(currentUserId, query);
   }
 
   @Post()
@@ -71,7 +81,7 @@ export class ArticleController {
   async update(
     @User('id') currentUserId: number,
     @Param('slug') slug: string,
-    @Body('article') updateArticleDto: CreateArticleDto,
+    @Body('article') updateArticleDto: UpdateArticleDto,
   ): Promise<ArticleResponseInterface> {
     const article: ArticleEntity = await this.articleService.updateArticle(
       currentUserId,

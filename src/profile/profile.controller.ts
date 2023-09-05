@@ -6,6 +6,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   UseGuards,
@@ -25,6 +27,7 @@ export class ProfileController {
   }
 
   @Post(':username/follow')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async followUser(
     @Param('username') username: string,

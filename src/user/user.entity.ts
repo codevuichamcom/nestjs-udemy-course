@@ -41,8 +41,4 @@ export class UserEntity {
   @ManyToMany(() => ArticleEntity)
   @JoinTable()
   favorites: ArticleEntity[];
-
-  @ManyToMany(() => UserEntity)
-  @JoinTable()
-  followerUser: UserEntity[];
 }

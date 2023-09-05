@@ -2,11 +2,13 @@ import { ArticleEntity } from '@app/article/article.entity';
 import { CreateArticleDto } from '@app/article/dto/create-article.dto';
 import { ArticleResponseInterface } from '@app/article/types/article-response.interface';
 import { ArticlesResponseInterface } from '@app/article/types/articles-response.interface';
+import { FollowEntity } from '@app/profile/folow.entity';
 import { UserEntity } from '@app/user/user.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import slugify from 'slugify';
 import { DeleteResult, getRepository, Repository } from 'typeorm';
+import { UpdateArticleDto } from '@app/article/dto/update-article.dto';
 
 @Injectable()
 export class ArticleService {
@@ -15,6 +17,8 @@ export class ArticleService {
     private readonly articleRepository: Repository<ArticleEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(FollowEntity)
+    private readonly followRepository: Repository<FollowEntity>,
   ) {}
 
   async findAll(
@@ -36,7 +40,7 @@ export class ArticleService {
         username: query.author,
       });
       queryBuilder.andWhere('articles.authorId = :id', {
-        id: author.id,
+        id: author?.id,
       });
     }
 
@@ -86,6 +90,41 @@ export class ArticleService {
     return { articles: articlesWithFavorited, articlesCount };
   }
 
+  async getFeed(
+    currentUserId: number,
+    query: any,
+  ): Promise<ArticlesResponseInterface> {
+    const follows = await this.followRepository.find({
+      followerId: currentUserId,
+    });
+
+    if (follows.length === 0) {
+      return { articles: [], articlesCount: 0 };
+    }
+
+    const followingUserIds = follows.map((follow) => follow.followingId);
+    const queryBuilder = getRepository(ArticleEntity)
+      .createQueryBuilder('articles')
+      .leftJoinAndSelect('articles.author', 'author')
+      .where('articles.authorId IN (:...ids)', { ids: followingUserIds });
+
+    queryBuilder.orderBy('articles.createdAt', 'DESC');
+
+    const articlesCount = await queryBuilder.getCount();
+
+    if (query.limit) {
+      queryBuilder.limit(query.limit);
+    }
+
+    if (query.offset) {
+      queryBuilder.offset(query.offset);
+    }
+
+    const articles = await queryBuilder.getMany();
+
+    return { articles, articlesCount };
+  }
+
   async createArticle(
     currentUser: UserEntity,
     createArticleDto: CreateArticleDto,
@@ -126,7 +165,7 @@ export class ArticleService {
   async updateArticle(
     currentUserId: number,
     slug: string,
-    updateArticleDto: CreateArticleDto,
+    updateArticleDto: UpdateArticleDto,
   ): Promise<ArticleEntity> {
     const article = await this.findBySlug(slug);
 
@@ -193,6 +232,13 @@ export class ArticleService {
   }
 
   buildArticleResponse(article: ArticleEntity): ArticleResponseInterface {
-    return { article };
+    delete article.id;
+    delete article.updateTimestamp;
+    return {
+      article: {
+        ...article,
+        favorited: false,
+      },
+    };
   }
 }
