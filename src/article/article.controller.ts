@@ -54,15 +54,22 @@ export class ArticleController {
       currentUser,
       createArticleDto,
     );
-    return this.articleService.buildArticleResponse(article);
+    const isFavoritedArticle: boolean =
+      await this.articleService.isFavoritedArticle(currentUser.id, article.id);
+    return this.buildArticleResponse(article, isFavoritedArticle);
   }
 
   @Get(':slug')
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe())
-  async getSingleArticle(@Param('slug') slug: string) {
+  async getSingleArticle(
+    @Param('slug') slug: string,
+    @User('id') currentUserId: number,
+  ) {
     const article = await this.articleService.findBySlug(slug);
-    return this.articleService.buildArticleResponse(article);
+    const isFavoritedArticle: boolean =
+      await this.articleService.isFavoritedArticle(currentUserId, article.id);
+    return this.buildArticleResponse(article, isFavoritedArticle);
   }
 
   @Delete(':slug')
@@ -88,8 +95,9 @@ export class ArticleController {
       slug,
       updateArticleDto,
     );
-
-    return this.articleService.buildArticleResponse(article);
+    const isFavoritedArticle: boolean =
+      await this.articleService.isFavoritedArticle(currentUserId, article.id);
+    return this.buildArticleResponse(article, isFavoritedArticle);
   }
 
   @Post(':slug/favorite')
@@ -103,7 +111,7 @@ export class ArticleController {
       slug,
     );
 
-    return this.articleService.buildArticleResponse(article);
+    return this.buildArticleResponse(article, true);
   }
 
   @Delete(':slug/favorite')
@@ -117,6 +125,20 @@ export class ArticleController {
       slug,
     );
 
-    return this.articleService.buildArticleResponse(article);
+    return this.buildArticleResponse(article, false);
+  }
+
+  buildArticleResponse(
+    article: ArticleEntity,
+    favorited: boolean,
+  ): ArticleResponseInterface {
+    delete article.id;
+    delete article.updateTimestamp;
+    return {
+      article: {
+        ...article,
+        favorited,
+      },
+    };
   }
 }

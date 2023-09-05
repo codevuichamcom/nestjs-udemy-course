@@ -231,14 +231,16 @@ export class ArticleService {
     );
   }
 
-  buildArticleResponse(article: ArticleEntity): ArticleResponseInterface {
-    delete article.id;
-    delete article.updateTimestamp;
-    return {
-      article: {
-        ...article,
-        favorited: false, //TODO: update dynamic favorited before build response
-      },
-    };
+  async isFavoritedArticle(
+    userId: number,
+    articleId: number,
+  ): Promise<boolean> {
+    const user = await this.userRepository.findOne(userId, {
+      relations: ['favorites'],
+    });
+
+    return user.favorites.some(
+      (userInfavorites) => userInfavorites.id === articleId,
+    );
   }
 }
