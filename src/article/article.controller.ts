@@ -1,9 +1,13 @@
-import { ArticleResponseInterface } from './types/article-response.interface';
+import { CreateCommentDto } from './dto/create-comment.dto';
 import { ArticleEntity } from '@app/article/article.entity';
-import { UserEntity } from '@app/user/user.entity';
-import { AuthGuard } from '@app/user/guards/auth.guard';
 import { ArticleService } from '@app/article/article.service';
+import { CommentService } from '@app/article/comment.service';
+import { CreateArticleDto } from '@app/article/dto/create-article.dto';
+import { UpdateArticleDto } from '@app/article/dto/update-article.dto';
+import { ArticlesResponseInterface } from '@app/article/types/articles-response.interface';
 import { User } from '@app/user/decorator/user.decorator';
+import { AuthGuard } from '@app/user/guards/auth.guard';
+import { UserEntity } from '@app/user/user.entity';
 import {
   Body,
   Controller,
@@ -17,14 +21,15 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ArticlesResponseInterface } from '@app/article/types/articles-response.interface';
-import { CreateArticleDto } from '@app/article/dto/create-article.dto';
 import { DeleteResult } from 'typeorm';
-import { UpdateArticleDto } from '@app/article/dto/update-article.dto';
+import { ArticleResponseInterface } from '@app/article/types/article-response.interface';
 
 @Controller('articles')
 export class ArticleController {
-  constructor(private readonly articleService: ArticleService) {}
+  constructor(
+    private readonly articleService: ArticleService,
+    private readonly commentService: CommentService,
+  ) {}
 
   @Get()
   async findAll(
@@ -98,6 +103,40 @@ export class ArticleController {
     const isFavoritedArticle: boolean =
       await this.articleService.isFavoritedArticle(currentUserId, article.id);
     return this.buildArticleResponse(article, isFavoritedArticle);
+  }
+
+  @Post(':slug/comments')
+  @UseGuards(AuthGuard)
+  async addCommentToArticle(
+    @Param('slug') slug: string,
+    @Body('comment') createCommentDto: CreateCommentDto,
+    @User() currentUser,
+  ) {
+    return await this.commentService.createComment(
+      createCommentDto,
+      slug,
+      currentUser,
+    );
+  }
+
+  @Get(':slug/comments')
+  @UseGuards(AuthGuard)
+  async getCommentsOfArticle(@Param('slug') slug: string) {
+    return await this.commentService.getCommentOfArticle(slug);
+  }
+
+  @Delete(':slug/comments/:commentId')
+  @UseGuards(AuthGuard)
+  async deleteCommentFromArticle(
+    @User('id') currentUserId: number,
+    @Param('slug') slug: string,
+    @Param('commentId') commentId: number,
+  ) {
+    return await this.commentService.deleteCommentOfArticle(
+      slug,
+      commentId,
+      currentUserId,
+    );
   }
 
   @Post(':slug/favorite')
