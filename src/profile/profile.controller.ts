@@ -35,6 +35,7 @@ export class ProfileController {
   ): Promise<ProfileResponseInterface> {
     return await this.profileService.followUser(username, currentUserId);
   }
+
   @Delete(':username/follow')
   @UseGuards(AuthGuard)
   async unfollow(

@@ -2,11 +2,11 @@ import { UserEntity } from '@app/user/user.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, getRepository } from 'typeorm';
-import { ArticleEntity } from './article.entity';
-import { CommentEntity } from './comment.entity';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { CommentResponseInterface } from './types/comment-response.interface';
-import { CommentsResponseInterface } from './types/comments-response.interface';
+import { ArticleEntity } from '@app/article/article.entity';
+import { CommentEntity } from '@app/article/comment.entity';
+import { CreateCommentDto } from '@app/article/dto/create-comment.dto';
+import { CommentResponseInterface } from '@app/article/types/comment-response.interface';
+import { CommentsResponseInterface } from '@app/article/types/comments-response.interface';
 
 @Injectable()
 export class CommentService {
@@ -67,9 +67,7 @@ export class CommentService {
     const queryBuilder = getRepository(CommentEntity)
       .createQueryBuilder('comments')
       .leftJoin('comments.article', 'article')
-      .where('article.slug = :slug', {
-        slug,
-      })
+      .where('article.slug = :slug', { slug })
       .andWhere('comments.authorId = :authorId', { authorId: currentUserId })
       .andWhere('comments.id = :id', { id: commentId });
 

@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommentEntity } from './comment.entity';
+import { CommentEntity } from '@app/article/comment.entity';
 
 @Entity({ name: 'articles' })
 export class ArticleEntity {
